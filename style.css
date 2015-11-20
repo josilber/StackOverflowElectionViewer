@@ -1,0 +1,64 @@
+.axis path,
+.axis line {
+    fill: none;
+    stroke: black;
+    shape-rendering: crispEdges;
+}
+
+.axis text {
+    font-family: sans-serif;
+    font-size: 14px;
+}
+
+.point {
+    stroke:black;
+    stroke-width:1px;
+}
+
+a {
+  color:black;
+}
+
+.legendcircle {
+    stroke:black;
+    stroke-width:1px;
+}
+
+.description {
+    width:100%;
+}
+
+.legendtext {
+    font-family: sans-serif;
+    font-size: 16px;
+}
+
+.legendrect {
+    fill: none;
+    stroke: black;
+    stroke-width:1px;
+    shape-rendering: crispEdges;
+}
+
+.axistext {
+    font-family: sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+    text-anchor: middle;
+}
+
+.information {
+    width:35em;
+    margin-top:0px;
+    margin-bottom:0.2em;
+}
+
+.ccircle {
+    width: 10px;
+    height: 10px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px; 
+    display: inline-block;
+}
+

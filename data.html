@@ -1,0 +1,44 @@
+<html>
+<body>
+<h2>Election Information</h2>
+
+Primary election vote counts as displayed <a href="http://stackoverflow.com/election/7?tab=primary">on the election page</a> are pulled every minute from an API setup by <a href="http://stackoverflow.com/users/1849664/undo">Undo</a> (thanks Undo!). The displayed values shouldn't be more than a minute or two stale unless something goes bad with the data refreshing.<br/><br/>
+
+The candidate score is calculated as described in <a href="http://meta.stackoverflow.com/a/289504/3093387">Shog9's meta answer</a>; the <a href="http://data.stackexchange.com/stackoverflow/query/298418/candidate-score?UserIds=1530814%2C3622940%2C1252759%2C871050%2C572%2C1234256%2C1065190%2C492405%2C616460%2C224988%2C3366929%2C465378%2C229044%2C1380752%2C100297%2C1849664%2C189134%2C542517%2C2371861%2C2581872%2C109702%2C3001736%2C1069068%2C476%2C995926%2C1952862%2C2876565%2C379693%2C1603234">linked SEDE query</a> there helped me grab the score in <a href="http://data.stackexchange.com/stackoverflow/query/395427/stack-overflow-election-statistics-query-main-site">the SEDE query I created for stats from the main site</a>. Since this data is from SEDE, it should be no more than 1-2 weeks stale.
+
+<h2>Statistics from the Main Site</h2>
+
+I pulled several statistics manually from each candidate's profile midway through the election, so the values should be no more than a few days stale:
+
+<ul>
+  <li><b>Helpful Flag Count</b>: Unfortunately no breakdown is publicly available to differentiate between comment and Q+A flag counts, and further no information about declined flags is publicly available.</li>
+  <li><b>Review Count</b>: <a href="http://meta.stackexchange.com/q/208806/253560">The reviewer is not available in the ReviewTasks table in SEDE</a>, so I'm pulling review counts from user profiles. This undercounts total reviews (e.g. I have done 2.1k close vote reviews, 1.5k low quality post reviews, and 1.1k suggested edit reviews, yet my total review count displays as 2.2k in my profile). I believe the reason for the undercounting is due to reviews on deleted posts.</li>
+</ul>
+
+I pulled the remaining statistics from <a href="http://data.stackexchange.com/stackoverflow/query/395427/stack-overflow-election-statistics-query-main-site">a SEDE query I wrote</a>, so they should be no more than 1-2 weeks stale:
+
+<ul>
+  <li><b>Answer Count</b>: Number of rows in the Posts table with PostTypeId=2 (broken down by OwnerUserId).</li>
+  <li><b>Badge Counts (Bronze/Silver/Gold)</b>: Number of rows in the Badges table with Class 3, 2, and 1, respectively (broken down by UserId).</li>
+  <li><b>Comment Count</b>: Number of rows in the Comments table (broken down by UserId).</li>
+  <li><b>Edit Counts (Post Body/Question Tags/Question Title)</b>: Number of unique posts (distinct PostId values) in the PostHistory table for which each candidate (identified by UserId) made the appropriate type of edit -- for Post Body these are PostHistoryTypeId=5 (body edit) or PostHistoryTypeId=8 (body rollback); for Question Tag edits these are PostHistoryTypeId=6 (tag edit) or PostHistoryTypeId=9 (tag rollback); and for Question Title edits these are PostHistoryTypeId=4 (title edit) or PostHistoryTypeId=7 (title rollback). Edits to one's own posts are excluded.</li>
+  <li><b>Question Count</b>: Number of rows in the Posts table with PostTypeId=1 (broken down by OwnerUserId).</li>
+  <li><b>Reputation</b>: Reputation field from the Users table.</li>
+  <li><b>Time Since Registration (Months)</b>: Number of months (rounded down) from the site registration date indicated in the CreationDate field of the Users table until the time of the query.</li>
+  <li><b>Vote Counts (DownVotes/UpVotes/Total)</b>: Derived from the DownVotes and UpVotes fields of the Users table.</li>
+</ul>
+
+<h2>Statistics from meta.so</h2>
+
+All statistics from meta.so were from <a href="http://data.stackexchange.com/meta.stackoverflow/query/395431/stack-overflow-election-statistics-query-meta-so">a SEDE query I wrote</a>, so they should be no more than 1-2 weeks stale. In addition to many fields that were also drawn for the main site, I drew the following values for each candidate:
+
+<ul>
+  <li><b>Tag Score (Discussion/Feature Requests/Support)</b>: The sum of the Score field for all answers posted by each user on a question with the relevant tags.</li>
+</ul>
+
+<h2>Statistics from meta.se</h2>
+
+All statistics from meta.se were from <a href="http://data.stackexchange.com/meta.stackexchange/query/395444/stack-overflow-election-statistics-query-meta-se">a SEDE query I wrote</a>, so they should be no more than 1-2 weeks stale. All fields have already been described above.
+
+</body>
+</html>

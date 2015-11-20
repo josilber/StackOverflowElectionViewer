@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Stack Overflow Election Candidate Statistics</title>
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="SOelection.js"></script>
+    <link href="style.css" type="text/css" rel="stylesheet"/>
+  </head>
+  <body>
+    <div style="margin: 0auto;">
+      <div style="float:left; width:50%;" id="graphtd">
+	<center>
+	  <p class="description"><b>Characteristics of Stack Overflow Election Candidates</b></p>
+	  <svg id="graphsvg" style="width:100%;"></svg>
+	</center>
+      </div>
+      <div style="margin-left:52%;">
+	<p class="description">
+	  Select the characteristic you wish to display on the x-axis:
+	</p>
+	<select onChange="d3Update('x');" id="xselect">
+	  <option value="CandidateScore" selected>Candidate Score for Election</option>
+	  <option value="primary">Current Primary Score in Election</option>
+	  <option disabled>-------- Main site: --------</option>
+	  <option value="AnswerCount">Answer Count (Main Site)</option>
+	  <option value="BronzeBadges">Badge Count: Bronze (Main Site)</option>
+	  <option value="SilverBadges">Badge Count: Silver (Main Site)</option>
+	  <option value="GoldBadges">Badge Count: Gold (Main Site)</option>
+	  <option value="CommentCount">Comment Count (Main Site)</option>
+	  <option value="BodyEdits">Edits to Post Body (Main Site)</option>
+	  <option value="TagEdits">Edits to Question Tags (Main Site)</option>
+	  <option value="TitleEdits">Edits to Question Title (Main Site)</option>
+	  <option value="HelpfulFlags">Helpful Flag Count (Main Site)</option>
+	  <option value="QuestionCount">Question Count (Main Site)</option>
+	  <option value="Reputation">Reputation (Main Site)</option>
+	  <option value="ReviewCount">Review Count (Main Site)</option>
+	  <option value="MonthsOnSite">Time Since Registration (Months)</option>
+	  <option value="DownVotes">Vote Count: DownVotes (Main Site)</option>
+	  <option value="UpVotes">Vote Count: UpVotes (Main Site)</option>
+	  <option value="Votes">Vote Count: Total (Main Site)</option>
+	  <option disabled>-------- meta.so: --------</option>
+	  <option value="AnswerCountMSO">Answer Count (meta.so)</option>
+	  <option value="BronzeBadgesMSO">Badge Count: Bronze (meta.so)</option>
+	  <option value="SilverBadgesMSO">Badge Count: Silver (meta.so)</option>
+	  <option value="GoldBadgesMSO">Badge Count: Gold (meta.so)</option>
+	  <option value="CommentCountMSO">Comment Count (meta.so)</option>
+	  <option value="QuestionCountMSO">Question Count (meta.so)</option>
+	  <option value="DiscussionScoreMSO">Tag Score: Discussion (meta.so)</option>
+	  <option value="FeatureRequestScoreMSO">Tag Score: Feature Requests (meta.so)</option>
+	  <option value="SupportScoreMSO">Tag Score: Support (meta.so)</option>
+	  <option value="DownVotesMSO">Vote Count: DownVotes (meta.so)</option>
+	  <option value="UpVotesMSO">Vote Count: UpVotes (meta.so)</option>
+	  <option value="VotesMSO">Vote Count: Total (meta.so)</option>
+	  <option disabled>-------- meta.se: --------</option>
+	  <option value="AnswerCountMSE">Answer Count (meta.se)</option>
+	  <option value="BronzeBadgesMSE">Badge Count: Bronze (meta.se)</option>
+	  <option value="SilverBadgesMSE">Badge Count: Silver (meta.se)</option>
+	  <option value="GoldBadgesMSE">Badge Count: Gold (meta.se)</option>
+	  <option value="CommentCountMSE">Comment Count (meta.se)</option>
+	  <option value="QuestionCountMSE">Question Count (meta.se)</option>
+	  <option value="DiscussionScoreMSE">Tag Score: Discussion (meta.se)</option>
+	  <option value="FeatureRequestScoreMSE">Tag Score: Feature Requests (meta.se)</option>
+	  <option value="SupportScoreMSE">Tag Score: Support (meta.se)</option>
+	  <option value="DownVotesMSE">Vote Count: DownVotes (meta.se)</option>
+	  <option value="UpVotesMSE">Vote Count: UpVotes (meta.se)</option>
+	  <option value="VotesMSE">Vote Count: Total (meta.se)</option>
+	</select><br/>
+
+	<p class="description">
+	  Select the characteristic you wish to display on the y-axis:
+	</p>	
+
+	<select onChange="d3Update('y');" id="yselect">
+	  <option value="CandidateScore">Candidate Score for Election</option>
+	  <option value="primary" selected>Current Primary Score in Election</option>
+	  <option disabled>-------- Main site: --------</option>
+	  <option value="AnswerCount">Answer Count (Main Site)</option>
+	  <option value="BronzeBadges">Badge Count: Bronze (Main Site)</option>
+	  <option value="SilverBadges">Badge Count: Silver (Main Site)</option>
+	  <option value="GoldBadges">Badge Count: Gold (Main Site)</option>
+	  <option value="CommentCount">Comment Count (Main Site)</option>
+	  <option value="BodyEdits">Edits to Post Body (Main Site)</option>
+	  <option value="TagEdits">Edits to Question Tags (Main Site)</option>
+	  <option value="TitleEdits">Edits to Question Title (Main Site)</option>
+	  <option value="HelpfulFlags">Helpful Flag Count (Main Site)</option>
+	  <option value="QuestionCount">Question Count (Main Site)</option>
+	  <option value="Reputation">Reputation (Main Site)</option>
+	  <option value="ReviewCount">Review Count (Main Site)</option>
+	  <option value="MonthsOnSite">Time Since Registration (Months)</option>
+	  <option value="DownVotes">Vote Count: DownVotes (Main Site)</option>
+	  <option value="UpVotes">Vote Count: UpVotes (Main Site)</option>
+	  <option value="Votes">Vote Count: Total (Main Site)</option>
+	  <option disabled>-------- meta.so: --------</option>
+	  <option value="AnswerCountMSO">Answer Count (meta.so)</option>
+	  <option value="BronzeBadgesMSO">Badge Count: Bronze (meta.so)</option>
+	  <option value="SilverBadgesMSO">Badge Count: Silver (meta.so)</option>
+	  <option value="GoldBadgesMSO">Badge Count: Gold (meta.so)</option>
+	  <option value="CommentCountMSO">Comment Count (meta.so)</option>
+	  <option value="QuestionCountMSO">Question Count (meta.so)</option>
+	  <option value="DiscussionScoreMSO">Tag Score: Discussion (meta.so)</option>
+	  <option value="FeatureRequestScoreMSO">Tag Score: Feature Requests (meta.so)</option>
+	  <option value="SupportScoreMSO">Tag Score: Support (meta.so)</option>
+	  <option value="DownVotesMSO">Vote Count: DownVotes (meta.so)</option>
+	  <option value="UpVotesMSO">Vote Count: UpVotes (meta.so)</option>
+	  <option value="VotesMSO">Vote Count: Total (meta.so)</option>
+	  <option disabled>-------- meta.se: --------</option>
+	  <option value="AnswerCountMSE">Answer Count (meta.se)</option>
+	  <option value="BronzeBadgesMSE">Badge Count: Bronze (meta.se)</option>
+	  <option value="SilverBadgesMSE">Badge Count: Silver (meta.se)</option>
+	  <option value="GoldBadgesMSE">Badge Count: Gold (meta.se)</option>
+	  <option value="CommentCountMSE">Comment Count (meta.se)</option>
+	  <option value="QuestionCountMSE">Question Count (meta.se)</option>
+	  <option value="DiscussionScoreMSE">Tag Score: Discussion (meta.se)</option>
+	  <option value="FeatureRequestScoreMSE">Tag Score: Feature Requests (meta.se)</option>
+	  <option value="SupportScoreMSE">Tag Score: Support (meta.se)</option>
+	  <option value="DownVotesMSE">Vote Count: DownVotes (meta.se)</option>
+	  <option value="UpVotesMSE">Vote Count: UpVotes (meta.se)</option>
+	  <option value="VotesMSE">Vote Count: Total (meta.se)</option>
+	</select><br/>
+
+	<p class="description">
+	  Select the characteristic you wish to display using the circle sizes:
+	</p>	
+
+	<select onChange="d3Update('r');" id="rselect">
+	  <option value="CandidateScore">Candidate Score for Election</option>
+	  <option value="primary">Current Primary Score in Election</option>
+	  <option disabled>-------- Main site: --------</option>
+	  <option value="AnswerCount">Answer Count (Main Site)</option>
+	  <option value="BronzeBadges">Badge Count: Bronze (Main Site)</option>
+	  <option value="SilverBadges">Badge Count: Silver (Main Site)</option>
+	  <option value="GoldBadges">Badge Count: Gold (Main Site)</option>
+	  <option value="CommentCount">Comment Count (Main Site)</option>
+	  <option value="BodyEdits">Edits to Post Body (Main Site)</option>
+	  <option value="TagEdits">Edits to Question Tags (Main Site)</option>
+	  <option value="TitleEdits">Edits to Question Title (Main Site)</option>
+	  <option value="HelpfulFlags" selected>Helpful Flag Count (Main Site)</option>
+	  <option value="QuestionCount">Question Count (Main Site)</option>
+	  <option value="Reputation">Reputation (Main Site)</option>
+	  <option value="ReviewCount">Review Count (Main Site)</option>
+	  <option value="MonthsOnSite">Time Since Registration (Months)</option>
+	  <option value="DownVotes">Vote Count: DownVotes (Main Site)</option>
+	  <option value="UpVotes">Vote Count: UpVotes (Main Site)</option>
+	  <option value="Votes">Vote Count: Total (Main Site)</option>
+	  <option disabled>-------- meta.so: --------</option>
+	  <option value="AnswerCountMSO">Answer Count (meta.so)</option>
+	  <option value="BronzeBadgesMSO">Badge Count: Bronze (meta.so)</option>
+	  <option value="SilverBadgesMSO">Badge Count: Silver (meta.so)</option>
+	  <option value="GoldBadgesMSO">Badge Count: Gold (meta.so)</option>
+	  <option value="CommentCountMSO">Comment Count (meta.so)</option>
+	  <option value="QuestionCountMSO">Question Count (meta.so)</option>
+	  <option value="DiscussionScoreMSO">Tag Score: Discussion (meta.so)</option>
+	  <option value="FeatureRequestScoreMSO">Tag Score: Feature Requests (meta.so)</option>
+	  <option value="SupportScoreMSO">Tag Score: Support (meta.so)</option>
+	  <option value="DownVotesMSO">Vote Count: DownVotes (meta.so)</option>
+	  <option value="UpVotesMSO">Vote Count: UpVotes (meta.so)</option>
+	  <option value="VotesMSO">Vote Count: Total (meta.so)</option>
+	  <option disabled>-------- meta.se: --------</option>
+	  <option value="AnswerCountMSE">Answer Count (meta.se)</option>
+	  <option value="BronzeBadgesMSE">Badge Count: Bronze (meta.se)</option>
+	  <option value="SilverBadgesMSE">Badge Count: Silver (meta.se)</option>
+	  <option value="GoldBadgesMSE">Badge Count: Gold (meta.se)</option>
+	  <option value="CommentCountMSE">Comment Count (meta.se)</option>
+	  <option value="QuestionCountMSE">Question Count (meta.se)</option>
+	  <option value="DiscussionScoreMSE">Tag Score: Discussion (meta.se)</option>
+	  <option value="FeatureRequestScoreMSE">Tag Score: Feature Requests (meta.se)</option>
+	  <option value="SupportScoreMSE">Tag Score: Support (meta.se)</option>
+	  <option value="DownVotesMSE">Vote Count: DownVotes (meta.se)</option>
+	  <option value="UpVotesMSE">Vote Count: UpVotes (meta.se)</option>
+	  <option value="VotesMSE">Vote Count: Total (meta.se)</option>
+	</select><br/>
+
+	<p class="description">
+	  Select which candidates to plot (<a href="javaScript:void(0);" onclick="showAll();">Show all</a>):
+	</p>
+
+	<div id="candidates" style="width:100%;"></div>
+
+	<p class="description">
+	  <small>Created by <a href="http://stackoverflow.com/users/3093387/josilber">josilber</a> | <a id="permalink" href="SOelection.html">permalink</a> | <a href="data.html">Data details</a> | <a href="candidates3.csv">Data</a> | <a href="http://soprimaries.erwaysoftware.com/update-api.json">Primary info</a></small>
+	</p>
+      </div>
+    </div>
+  </body>
+</html>
