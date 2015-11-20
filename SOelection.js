@@ -138,6 +138,7 @@ var d3Update = function(type) {
           query_string[pair[0]].push(decodeURIComponent(pair[1]));
         }
       }
+      var processedURL = false;
       if (query_string.hasOwnProperty("x") &&
 	  query_string.hasOwnProperty("y") &&
 	  query_string.hasOwnProperty("r") &&
@@ -152,6 +153,7 @@ var d3Update = function(type) {
 	    xvar != "Id" && yvar != "DisplayName" && yvar != "Id" &&
 	    rvar != "DisplayName" && rvar != "Id") {
 	  // Variables are valid, so we will load this one up
+          processedURL = true;
 	  document.getElementById("xselect").value = xvar;
 	  document.getElementById("yselect").value = yvar;
 	  document.getElementById("rselect").value = rvar;
@@ -166,6 +168,28 @@ var d3Update = function(type) {
 	    document.getElementById("check" + data[i].Id).checked = matched;
 	  }
 	}
+      }
+
+      // If we did not process the URL, randomly select the three variables
+      if (!processedURL) {
+        allVars = [];
+	for (key in data[0]) {
+	  if (data[0].hasOwnProperty(key) && key != "DisplayName" &&
+	      key != "Id") {
+	    allVars.push(key);
+	  }
+	}
+	var randX = "";
+	var randY = "";
+	var randR = "";
+	while (randX == randY || randX == randR || randY == randR) {
+	  randX = allVars[Math.floor(Math.random() * allVars.length)]
+	  randY = allVars[Math.floor(Math.random() * allVars.length)]
+	  randR = allVars[Math.floor(Math.random() * allVars.length)]
+	}
+	document.getElementById("xselect").value = randX;
+	document.getElementById("yselect").value = randY;
+	document.getElementById("rselect").value = randR;
       }
     }
 
