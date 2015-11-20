@@ -95,12 +95,21 @@ var getTooltip = function(d) {
     return d.DisplayName + " (x: " + d.x + ", y: " + d.y + ", r: " + d.r + ")";
 }
 
+var dataColumn = function(col) {
+    return col != "DisplayName" && col != "Id" && col != "Moderator" &&
+	col != "InRunning";
+}
+
 var getUserColumn = function(moderator) {
     var newHTML = "";
     for (var i = 0; i < data.length; ++i) {
         // Lord I hope nobody reads the source code and sees this monstrosity
 	if (data[i].Moderator == moderator) {
-            newHTML += "<span id='candText" + data[i].Id + "' onmouseover='hoverCandidate(" + data[i].Id + ")' onmouseout='unhoverCandidate(" + data[i].Id + ")'><input type='checkbox' id='check" + data[i].Id + "' onmouseover='hoverCandidate(" + data[i].Id + ")' onmouseout='unhoverCandidate(" + data[i].Id + ")' onclick='d3Update(\"checkbox\");' checked/>&nbsp;&nbsp;<a href='http://stackoverflow.com/u/" + data[i].Id + "'>" + data[i].DisplayName + "</a>&nbsp;&nbsp;<div class='ccircle' style='background-color: " + graph.colorScale(data[i].Id) + ";'></div></span><br/>";
+	    var checked = "";
+	    if (data[i].Moderator == 1 || data[i].InRunning == 1) {
+		checked = " checked";
+	    }
+            newHTML += "<span id='candText" + data[i].Id + "' onmouseover='hoverCandidate(" + data[i].Id + ")' onmouseout='unhoverCandidate(" + data[i].Id + ")'><input type='checkbox' id='check" + data[i].Id + "' onmouseover='hoverCandidate(" + data[i].Id + ")' onmouseout='unhoverCandidate(" + data[i].Id + ")' onclick='d3Update(\"checkbox\");'" + checked + "/>&nbsp;&nbsp;<a href='http://stackoverflow.com/u/" + data[i].Id + "'>" + data[i].DisplayName + "</a>&nbsp;&nbsp;<div class='ccircle' style='background-color: " + graph.colorScale(data[i].Id) + ";'></div></span><br/>";
 	}
     }
     return newHTML;
@@ -172,12 +181,9 @@ var d3Update = function(type) {
 	var yvar = query_string.y;
         var rvar = query_string.r;
 	var cvals = query_string.c.split("_");
-	if (data[0].hasOwnProperty(xvar) &&
-	    data[0].hasOwnProperty(yvar) &&
-	    data[0].hasOwnProperty(rvar) &&
-	    xvar != "DisplayName" && xvar != "Id" && xvar != "Moderator" &&
-	    yvar != "DisplayName" && yvar != "Id" && yvar != "Moderator" &&
-	    rvar != "DisplayName" && rvar != "Id" && rvar != "Moderator") {
+	if (data[0].hasOwnProperty(xvar) && data[0].hasOwnProperty(yvar) &&
+	    data[0].hasOwnProperty(rvar) && dataColumn(xvar) &&
+	    dataColumn(yvar) && dataColumn(rvar)) {
 	  // Variables are valid, so we will load this one up
           processedURL = true;
 	  document.getElementById("xselect").value = xvar;
@@ -200,8 +206,7 @@ var d3Update = function(type) {
       if (!processedURL) {
         allVars = [];
 	for (key in data[0]) {
-	  if (data[0].hasOwnProperty(key) && key != "DisplayName" &&
-	      key != "Id" && key != "Moderator") {
+	  if (data[0].hasOwnProperty(key) && dataColumn(key)) {
 	    allVars.push(key);
 	  }
 	}
@@ -578,7 +583,7 @@ var d3Setup = function() {
 	.style("width", (graphEdge+10)+"px");
 
     // Load up the dataset
-    d3.csv("candidates4.csv", function(error, d) {
+    d3.csv("candidates5.csv", function(error, d) {
 	if (error) {
 	    alert("Error loading csv data");
 	} else {
