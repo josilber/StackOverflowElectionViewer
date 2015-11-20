@@ -95,6 +95,17 @@ var getTooltip = function(d) {
     return d.DisplayName + " (x: " + d.x + ", y: " + d.y + ", r: " + d.r + ")";
 }
 
+var getUserColumn = function(moderator) {
+    var newHTML = "";
+    for (var i = 0; i < data.length; ++i) {
+        // Lord I hope nobody reads the source code and sees this monstrosity
+	if (data[i].Moderator == moderator) {
+            newHTML += "<span id='candText" + data[i].Id + "' onmouseover='hoverCandidate(" + data[i].Id + ")' onmouseout='unhoverCandidate(" + data[i].Id + ")'><input type='checkbox' id='check" + data[i].Id + "' onmouseover='hoverCandidate(" + data[i].Id + ")' onmouseout='unhoverCandidate(" + data[i].Id + ")' onclick='d3Update(\"checkbox\");' checked/>&nbsp;&nbsp;<a href='http://stackoverflow.com/u/" + data[i].Id + "'>" + data[i].DisplayName + "</a>&nbsp;&nbsp;<div class='ccircle' style='background-color: " + graph.colorScale(data[i].Id) + ";'></div></span><br/>";
+	}
+    }
+    return newHTML;
+}
+
 var d3Update = function(type) {
     // Don't do anything if the data hasn't been loaded.
     if (data == null) {
@@ -107,17 +118,31 @@ var d3Update = function(type) {
 	// Create the color scale for points
 	var allId = [];
 	for (var i=0; i < data.length; ++i) {
-	  allId.push(data[i].Id);
+	  if (data[i].Moderator == 0) {
+	    allId.push(data[i].Id);
+	  }
 	}
-	graph.colorScale = d3.scale.category20()
+	graph.baseColorScale = d3.scale.category20()
 	    .domain(allId);
+	graph.colorScale = function(id) {
+	  for (var i=0; i < data.length; ++i) {
+	    if (data[i].Id == id) {
+              if (data[i].Moderator == 0) {
+		 return graph.baseColorScale(id);
+	       } else {
+	         return "white";
+	       }
+	    }
+	  }
+	  return "white";  // Shouldn't ever reach here
+	}
 
-      var newHTML = "";
-      for (var i = 0; i < data.length; ++i) {
-        // Lord I hope nobody reads the source code and sees this monstrosity
-        newHTML += "<span id='candText" + data[i].Id + "' onmouseover='hoverCandidate(" + data[i].Id + ")' onmouseout='unhoverCandidate(" + data[i].Id + ")'><input type='checkbox' id='check" + data[i].Id + "' onmouseover='hoverCandidate(" + data[i].Id + ")' onmouseout='unhoverCandidate(" + data[i].Id + ")' onclick='d3Update(\"checkbox\");' checked/>&nbsp;&nbsp;<a href='http://stackoverflow.com/u/" + data[i].Id + "'>" + data[i].DisplayName + "</a>&nbsp;&nbsp;<div class='ccircle' style='background-color: " + graph.colorScale(data[i].Id) + ";'></div></span><br/>";
-      }
-      document.getElementById("candidates").innerHTML = newHTML;
+
+	// Candidate list can now be created:
+	var newHTML = "<table><tr><td><b>Candidates</b><br/>" +
+	    getUserColumn(0) + "</td><td><b>Moderators</b><br/>" +
+	    getUserColumn(1) + "</td></tr></table>";
+	document.getElementById("candidates").innerHTML = newHTML;
 
       // Time for the selections from the URL
       // URL parsing from http://stackoverflow.com/a/979995/3093387
@@ -149,9 +174,10 @@ var d3Update = function(type) {
 	var cvals = query_string.c.split("_");
 	if (data[0].hasOwnProperty(xvar) &&
 	    data[0].hasOwnProperty(yvar) &&
-	    data[0].hasOwnProperty(rvar) && xvar != "DisplayName" &&
-	    xvar != "Id" && yvar != "DisplayName" && yvar != "Id" &&
-	    rvar != "DisplayName" && rvar != "Id") {
+	    data[0].hasOwnProperty(rvar) &&
+	    xvar != "DisplayName" && xvar != "Id" && xvar != "Moderator" &&
+	    yvar != "DisplayName" && yvar != "Id" && yvar != "Moderator" &&
+	    rvar != "DisplayName" && rvar != "Id" && rvar != "Moderator") {
 	  // Variables are valid, so we will load this one up
           processedURL = true;
 	  document.getElementById("xselect").value = xvar;
@@ -175,7 +201,7 @@ var d3Update = function(type) {
         allVars = [];
 	for (key in data[0]) {
 	  if (data[0].hasOwnProperty(key) && key != "DisplayName" &&
-	      key != "Id") {
+	      key != "Id" && key != "Moderator") {
 	    allVars.push(key);
 	  }
 	}
@@ -497,13 +523,16 @@ var requestPrimaryData = function(first) {
     d3.json("primary.txt", function(error, json) {
 	if (error == null) {
 	    for (var i=0; i < data.length; ++i) {
-		if (!json.hasOwnProperty(data[i].Id)) {
-		    return;  // Missing data for somebody
+		if (data[i].Moderator == 0 &&
+		    !json.hasOwnProperty(data[i].Id)) {
+		    return;  // Missing data for a candidate
 		}
 	    }
 	    
 	    for (var i=0; i < data.length; ++i) {
-		data[i].primary = json[data[i].Id];
+		if (data[i].Moderator == 0) {
+		    data[i].primary = json[data[i].Id];
+		}
 	    }
 
 	    if (first) {
@@ -549,7 +578,7 @@ var d3Setup = function() {
 	.style("width", (graphEdge+10)+"px");
 
     // Load up the dataset
-    d3.csv("candidates3.csv", function(error, d) {
+    d3.csv("candidates4.csv", function(error, d) {
 	if (error) {
 	    alert("Error loading csv data");
 	} else {
