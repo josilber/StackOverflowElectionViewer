@@ -166,9 +166,6 @@ var d3Update = function(type) {
 	    document.getElementById("check" + data[i].Id).checked = matched;
 	  }
 	}
-	console.log(data[0]);
-	console.log(xvar + " " + yvar + " " + rvar);
-	console.log(cvals);
       }
     }
 
