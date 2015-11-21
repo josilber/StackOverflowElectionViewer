@@ -66,6 +66,6 @@ if (array_key_exists("DisplayNameMSE", $mseData)) {
 }
 $fullData = array_merge($soData, $msoData, $mseData);
 
-$newURL = "SOelection.html?u=" . urlencode(json_encode($fullData));
+$newURL = "SOelection.html?u=" . rawurlencode(json_encode($fullData));
 header('Location: ' . $newURL);
 ?>
