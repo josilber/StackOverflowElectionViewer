@@ -139,6 +139,16 @@ var getUserColumn = function(moderator) {
     return newHTML;
 }
 
+var getDomain = function(variable, pdat, domainScalar) {
+    var vmin = d3.min(pdat, function(d) {  return d[variable]; });
+    var vmax = d3.max(pdat, function(d) {  return d[variable]; });
+    if (vmin <= 0.1 * vmax) {
+	return [0, vmax * domainScalar];
+    } else {
+	return [vmin / domainScalar, vmax * domainScalar];
+    }
+}
+
 var d3Update = function(type) {
     // Don't do anything if the data hasn't been loaded.
     if (data == null) {
@@ -293,16 +303,16 @@ var d3Update = function(type) {
 	// Create x, y, and radius scales
 	graph.xpix = [leftPadding, w - rightPadding];
 	graph.xScale = d3.scale.linear()
-	    .domain([0, d3.max(pdat, function(d) {  return d.x; }) * domainScalar])
+	    .domain(getDomain("x", pdat, domainScalar))
 	    .range(graph.xpix);
 	graph.ypix = [h - bottomPadding, topPadding];
 	graph.yScale = d3.scale.linear()
-	    .domain([0, d3.max(pdat, function(d) {  return d.y; }) * domainScalar])
+	    .domain(getDomain("y", pdat, domainScalar))
 	    .range(graph.ypix);
 
 	var rScaleBounds = [1*w/450, 8*w/450];
 	graph.rScale = d3.scale.sqrt()
-	    .domain([0, d3.max(pdat, function(d) {  return d.r; })])
+	    .domain(getDomain("r", pdat, 1.0))
 	    .range(rScaleBounds)  // Radius linear with graph size
 
 	// Create x and y axes
@@ -404,9 +414,9 @@ var d3Update = function(type) {
 	// need to change the scales. We do so here.
 
 	// Update the scales
-	graph.xScale.domain([0, d3.max(pdat, function(d) { return d.x; }) * domainScalar]);
-	graph.yScale.domain([0, d3.max(pdat, function(d) { return d.y; }) * domainScalar]);
-	graph.rScale.domain([0, d3.max(pdat, function(d) { return d.r; })]);
+	graph.xScale.domain(getDomain("x", pdat, domainScalar))
+	graph.yScale.domain(getDomain("y", pdat, domainScalar))
+	graph.rScale.domain(getDomain("r", pdat, 1.0))
 
 	// Transition in the new axes
 	svg.selectAll(".x.axistext")
