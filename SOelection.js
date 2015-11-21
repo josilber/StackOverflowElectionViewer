@@ -62,21 +62,28 @@ var showAll = function() {
 
 var getLegendPoints = function(pdat) {
     // Determine nice values for the three points
+    var minR = d3.min(pdat, function(d) {  return d.r; })
     var maxR = d3.max(pdat, function(d) {  return d.r; })
     var val1 = 3;
     var val2 = 2;
     var val3 = 1;
-    var val1s = [3, 4, 5, 10, 25, 50, 100, 250, 500, 1000, 2500, 5000,
-		 10000, 25000, 50000, 100000, 250000, 500000];
-    var val2s = [2, 2, 2, 5, 10, 25, 10, 100, 50, 100, 250, 500,
-		 1000, 2500, 5000, 10000, 25000, 50000];
-    var val3s = [1, 1, 1, 1, 5, 10, 1, 25, 5, 10, 25, 50,
-		 100, 250, 500, 1000, 2500, 5000];
-    for (var i=0; i < val1s.length; ++i) {
-	if (maxR >= val1s[i]) {
-	    val1 = val1s[i];
-	    val2 = val2s[i];
-	    val3 = val3s[i];
+    if (minR > 0.1 * maxR) {
+	val1 = maxR;
+	val2 = Math.round((minR + maxR) / 2.0);
+	val3 = minR;
+    } else {
+	var val1s = [3, 4, 5, 10, 25, 50, 100, 250, 500, 1000, 2500, 5000,
+		     10000, 25000, 50000, 100000, 250000, 500000];
+	var val2s = [2, 2, 2, 5, 10, 25, 10, 100, 50, 100, 250, 500,
+		     1000, 2500, 5000, 10000, 25000, 50000];
+	var val3s = [1, 1, 1, 1, 5, 10, 1, 25, 5, 10, 25, 50,
+		     100, 250, 500, 1000, 2500, 5000];
+	for (var i=0; i < val1s.length; ++i) {
+	    if (maxR >= val1s[i]) {
+		val1 = val1s[i];
+		val2 = val2s[i];
+		val3 = val3s[i];
+	    }
 	}
     }
     var points = [val3, val2, val1];
