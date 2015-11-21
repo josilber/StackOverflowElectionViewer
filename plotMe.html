@@ -1,0 +1,32 @@
+<html>
+<body>
+
+<form action="upload.php" method="post" enctype="multipart/form-data">
+
+<h2>Instructions for Adding a User to the Stack Overflow Moderation Election Visualization</h2>
+
+<h4>Step 1: Query For Information from Main Site</h4>
+
+<p>Please run <a href="https://data.stackexchange.com/stackoverflow/query/395886/stack-overflow-election-statistics-query-new-user-main-site">the linked SEDE query</a>, entering your Stack Overflow user ID (the number in the URL when you go to <a href="http://stackoverflow.com/users/current">your user profile on the main Stack Overflow site</a>), your current helpful flag count (viewable in the Activity tab of your user profile), and your number of reviews displayed in your profile (viewable in the Activity -> all actions -> reviews tab of your user profile). Click the "Download CSV" link on the SEDE query page, and then upload the csv file below.</p>
+
+<input type="file" name="soUpload" id="soFile">
+
+<h4>Step 2: Query for Information from meta.so</h4>
+
+<p>Please run <a href="https://data.stackexchange.com/meta.stackoverflow/query/395887/stack-overflow-election-statistics-query-new-user-meta-so">the linked SEDE query</a>, again entering your Stack Overflow user ID (the same one as above). Click the "Download CSV" link on the SEDE query page, and then upload the csv file below.</p>
+
+<input type="file" name="msoUpload" id="msoFile">
+
+<h4>Step 3: Query for Information from meta.se</h4>
+
+<p>Please run <a href="https://data.stackexchange.com/meta.stackexchange/query/395888/stack-overflow-election-statistics-query-new-user-meta-se">the linked SEDE query</a>, this time entering your Meta Stack Exchange user ID (different from the one above, and found in the URL when you visit <a href="http://meta.stackexchange.com/users/current">your profile page on meta.stackexchange.com</a>). Click the "Download CSV" link on the SEDE query page, and then upload the csv file below. If you do not have an account, simply don't upload a file.</p>
+
+<input type="file" name="mseUpload" id="mseFile">
+
+<h4>Step 4: See the New Visualization</h4>
+
+<input type="submit" value="See the Visualization" name="submit">
+</form>
+
+</body>
+</html>

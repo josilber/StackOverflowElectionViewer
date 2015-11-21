@@ -100,13 +100,37 @@ var dataColumn = function(col) {
 	col != "InRunning";
 }
 
+var parseURL = function() {
+    // URL parsing from http://stackoverflow.com/a/979995/3093387
+    var query_string = {};
+    var query = window.location.search.substring(1);
+    var vars = query.split("&");
+    for (var i=0;i<vars.length;i++) {
+        var pair = vars[i].split("=");
+        // If first entry with this name
+        if (typeof query_string[pair[0]] === "undefined") {
+            query_string[pair[0]] = decodeURIComponent(pair[1]);
+            // If second entry with this name
+        } else if (typeof query_string[pair[0]] === "string") {
+            var arr = [ query_string[pair[0]],decodeURIComponent(pair[1]) ];
+            query_string[pair[0]] = arr;
+            // If third or later entry with this name
+        } else {
+            query_string[pair[0]].push(decodeURIComponent(pair[1]));
+        }
+    }
+    return query_string;
+}
+
+
+
 var getUserColumn = function(moderator) {
     var newHTML = "";
     for (var i = 0; i < data.length; ++i) {
         // Lord I hope nobody reads the source code and sees this monstrosity
 	if (data[i].Moderator == moderator) {
 	    var checked = "";
-	    if (data[i].Moderator == 1 || data[i].InRunning == 1) {
+	    if (data[i].Moderator == 1 || data[i].InRunning != 0) {
 		checked = " checked";
 	    }
             newHTML += "<span id='candText" + data[i].Id + "' onmouseover='hoverCandidate(" + data[i].Id + ")' onmouseout='unhoverCandidate(" + data[i].Id + ")'><input type='checkbox' id='check" + data[i].Id + "' onmouseover='hoverCandidate(" + data[i].Id + ")' onmouseout='unhoverCandidate(" + data[i].Id + ")' onclick='d3Update(\"checkbox\");'" + checked + "/>&nbsp;&nbsp;<a href='http://stackoverflow.com/u/" + data[i].Id + "'>" + data[i].DisplayName + "</a>&nbsp;&nbsp;<div class='ccircle' style='background-color: " + graph.colorScale(data[i].Id) + ";'></div></span><br/>";
@@ -154,24 +178,7 @@ var d3Update = function(type) {
 	document.getElementById("candidates").innerHTML = newHTML;
 
       // Time for the selections from the URL
-      // URL parsing from http://stackoverflow.com/a/979995/3093387
-      var query_string = {};
-      var query = window.location.search.substring(1);
-      var vars = query.split("&");
-      for (var i=0;i<vars.length;i++) {
-        var pair = vars[i].split("=");
-        // If first entry with this name
-        if (typeof query_string[pair[0]] === "undefined") {
-          query_string[pair[0]] = decodeURIComponent(pair[1]);
-        // If second entry with this name
-        } else if (typeof query_string[pair[0]] === "string") {
-          var arr = [ query_string[pair[0]],decodeURIComponent(pair[1]) ];
-          query_string[pair[0]] = arr;
-            // If third or later entry with this name
-        } else {
-          query_string[pair[0]].push(decodeURIComponent(pair[1]));
-        }
-      }
+      var query_string = parseURL();
       var processedURL = false;
       if (query_string.hasOwnProperty("x") &&
 	  query_string.hasOwnProperty("y") &&
@@ -256,6 +263,10 @@ var d3Update = function(type) {
     }
     var newLink = "SOelection.html?x=" + xvar + "&y=" + yvar + "&r=" + rvar +
 	"&c=" + candidates.join("_");
+    var query_string = parseURL();
+    if (query_string.hasOwnProperty("u")) {
+	newLink += "&u=" + query_string.u;
+    }
     document.getElementById("permalink").setAttribute("href", newLink);
 
     var pdat = [];
@@ -528,7 +539,7 @@ var requestPrimaryData = function(first) {
     d3.json("primary.txt", function(error, json) {
 	if (error == null) {
 	    for (var i=0; i < data.length; ++i) {
-		if (data[i].Moderator == 0 &&
+		if (data[i].Moderator == 0 && data[i].InRunning == 1 &&
 		    !json.hasOwnProperty(data[i].Id)) {
 		    return;  // Missing data for a candidate
 		}
@@ -588,6 +599,27 @@ var d3Setup = function() {
 	    alert("Error loading csv data");
 	} else {
 	    data = d;
+
+	    // Augment with the user in the URL, if one is provided
+	    var urlInfo = parseURL();
+	    if (urlInfo.hasOwnProperty("u")) {
+		var user = JSON.parse(urlInfo["u"]);
+		user.Moderator = "0";
+		user.InRunning = "2";
+		var allThere = true;
+		for (var k in data[0]) {
+		    if (!user.hasOwnProperty(k)) {
+			allThere = false;
+		    }
+		}
+		if (!allThere) {
+		    alert("Missing an expected field for the specified user; please re-run the SEDE queries and refresh the URL");
+		} else {
+		    data.push(user);
+		}
+	    }
+
+	    // No primary scores loaded yet
 	    for (var i=0; i < data.length; ++i) {
 		data[i].primary = 0;
 	    }
